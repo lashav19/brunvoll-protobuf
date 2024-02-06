@@ -5,28 +5,47 @@ import json
 import difflib
 from deepdiff import DeepDiff
 from typing import Callable
-import argparse
+from argparse import ArgumentParser, Namespace
+from colorama import Fore
+import sys
 
-def parse_file(file):
-    try:
-        import proto5.thruster5 as proto5 
+
+def parse_file(file, old=False):
+    if old:
+        import proto5.thruster5 as proto5
         with open(file, 'r') as f:
             return text_format.Parse(f.read(), proto5.ThrusterParameters())
 
-    except ParseError:
-        import proto6.thruster6 as proto6 
-        with open(file, 'r') as f:
-            return text_format.Parse(f.read(), proto6.ThrusterParameters())
-    
+    import proto6.thruster6 as proto6
+    with open(file, 'r') as f:
+        return text_format.Parse(f.read(), proto6.ThrusterParameters())
+
 
 RED: Callable[[str], str] = lambda text: f"\u001b[31m{text}\033\u001b[0m"
 GREEN: Callable[[str], str] = lambda text: f"\u001b[32m{text}\033\u001b[0m"
 
-def get_edits_string(old: str, new: str) -> str:
-    result = ""
 
-    lines = difflib.unified_diff(old.splitlines(keepends=True), new.splitlines(keepends=True))
-    
+def get_edits_string(old: str, new: str, short: bool = False) -> str:
+    result = ""
+    if short:
+        add = 0
+        remove = 0
+        lines = difflib.unified_diff(old.splitlines(
+            keepends=True), new.splitlines())
+        for line in lines:
+            line = line.rstrip()
+            if line.startswith("+"):
+                add += 1
+            elif line.startswith("-"):
+                remove += 1
+            elif line.startswith("?"):
+                continue
+
+        return Fore.GREEN + f"Added {add}" + "      " + Fore.RED + f"Removed {remove}"
+
+    lines = difflib.unified_diff(old.splitlines(
+        keepends=True), new.splitlines(keepends=True))
+
     for line in lines:
         line = line.rstrip()
         if line.startswith("+"):
@@ -40,23 +59,33 @@ def get_edits_string(old: str, new: str) -> str:
 
 
 if __name__ == "__main__":
+    try:
+        parser = ArgumentParser(
+            description=f"A tool to find differences in brunvoll protobuf files")
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-s", '--short')
-    parser.add_argument("-s", '--short')
+        # Example usage
+        parser.add_argument("file1")
+        parser.add_argument("file2")
 
+        parser.add_argument(
+            "-v5", "--version5", help="Selects the protobuf 5 version", action="store_true")
+        parser.add_argument(
+            "-s", "--short", help=f"displays a short format with adds and removes ex: {Fore.GREEN + f'Added: 3' + '      ' + Fore.RED + f'Removed: 4'}", action="store_true")
+        args: Namespace = parser.parse_args()
 
+        parsed1 = MessageToDict(parse_file(
+            str(args.file1), True if args.version5 else False))
 
-    # Example usage
-    filepath1 = r"C:\Users\Utplassering\bv-protobuf\config\35042D\thruster_parameters_1.prototxt"
-    parsed1 = MessageToDict(parse_file(filepath1, True))
+        parsed2 = MessageToDict(parse_file(
+            str(args.file2), True if args.version5 else False))
 
-    filepath2 = r"C:\Users\Utplassering\bv-protobuf\config\35042E\thruster_parameters_1.prototxt"
-    parsed2 = MessageToDict(parse_file(filepath2, True))
-
-    print(
-        get_edits_string(
-            json.dumps(parsed1, indent=4, sort_keys=True),
-            json.dumps(parsed2, indent=4, sort_keys=True)
+        print(
+            get_edits_string(
+                json.dumps(parsed1, indent=4, sort_keys=True),
+                json.dumps(parsed2, indent=4, sort_keys=True),
+                True if args.short else False
+            )
         )
-    )
+    except:
+        parser.print_help()
+        sys.exit(0)

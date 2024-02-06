@@ -3,6 +3,7 @@
 # source: common.proto
 # Protobuf Python Version: 4.25.2
 """Generated protocol buffer code."""
+import proto5.field_options_pb2 as field__options__pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database
@@ -12,26 +13,26 @@ from google.protobuf.internal import builder as _builder
 _sym_db = _symbol_database.Default()
 
 
-import proto5.field_options_pb2 as field__options__pb2
-
-
 DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0c\x63ommon.proto\x12\x14\x62rucon.configuration\x1a\x13\x66ield_options.proto\"\xd7\x02\n\x08Position\x12m\n\nx_position\x18\x01 \x01(\x01\x42Y\x82\xa6\x1dPX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\x8a\xa6\x1d\x01m\x12m\n\ny_position\x18\x02 \x01(\x01\x42Y\x82\xa6\x1dPX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\x8a\xa6\x1d\x01m\x12m\n\nz_position\x18\x03 \x01(\x01\x42Y\x82\xa6\x1dPX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\x8a\xa6\x1d\x01m\"h\n\x0fSerialInterface\x12\x17\n\x0f\x63ontroller_name\x18\x01 \x01(\t\x12\x16\n\x0e\x63om_port_index\x18\x02 \x01(\x05\x12\x10\n\x08udp_port\x18\x03 \x01(\x05\x12\x12\n\nip_address\x18\x04 \x01(\t\"H\n\x11\x45thernetInterface\x12\x12\n\nip_address\x18\x01 \x01(\t\x12\x0c\n\x04port\x18\x02 \x01(\r\x12\x11\n\tinterface\x18\x03 \x01(\tb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'common_pb2', _globals)
 if _descriptor._USE_C_DESCRIPTORS == False:
-  DESCRIPTOR._options = None
-  _globals['_POSITION'].fields_by_name['x_position']._options = None
-  _globals['_POSITION'].fields_by_name['x_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
-  _globals['_POSITION'].fields_by_name['y_position']._options = None
-  _globals['_POSITION'].fields_by_name['y_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
-  _globals['_POSITION'].fields_by_name['z_position']._options = None
-  _globals['_POSITION'].fields_by_name['z_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
-  _globals['_POSITION']._serialized_start=60
-  _globals['_POSITION']._serialized_end=403
-  _globals['_SERIALINTERFACE']._serialized_start=405
-  _globals['_SERIALINTERFACE']._serialized_end=509
-  _globals['_ETHERNETINTERFACE']._serialized_start=511
-  _globals['_ETHERNETINTERFACE']._serialized_end=583
+    DESCRIPTOR._options = None
+    _globals['_POSITION'].fields_by_name['x_position']._options = None
+    _globals['_POSITION'].fields_by_name[
+        'x_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
+    _globals['_POSITION'].fields_by_name['y_position']._options = None
+    _globals['_POSITION'].fields_by_name[
+        'y_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
+    _globals['_POSITION'].fields_by_name['z_position']._options = None
+    _globals['_POSITION'].fields_by_name[
+        'z_position']._serialized_options = b'\202\246\035PX-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel\212\246\035\001m'
+    _globals['_POSITION']._serialized_start = 60
+    _globals['_POSITION']._serialized_end = 403
+    _globals['_SERIALINTERFACE']._serialized_start = 405
+    _globals['_SERIALINTERFACE']._serialized_end = 509
+    _globals['_ETHERNETINTERFACE']._serialized_start = 511
+    _globals['_ETHERNETINTERFACE']._serialized_end = 583
 # @@protoc_insertion_point(module_scope)

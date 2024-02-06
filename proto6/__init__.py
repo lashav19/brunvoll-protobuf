@@ -1,1 +1,1 @@
-import lib.thruster_param6
+import proto6
