@@ -2,7 +2,7 @@ thruster_name: "Bow"
 thruster_type: FU63
 plant_number: "12293"
 position {
-  x_position: 0
+  x_position: 1
   y_position: 0
   z_position: 0
 }
@@ -18,7 +18,7 @@ local_control_selector: LocalControlSelectorGuiButton
 hpu {
   servo_pump_1 {
     pressure {
-      min_raw: 4
+      min_raw: 5
       max_raw: 20
       min_engineering: 0
       max_engineering: 100
