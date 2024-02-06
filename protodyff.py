@@ -8,6 +8,7 @@ from typing import Callable
 from argparse import ArgumentParser, Namespace
 from colorama import Fore
 import sys
+import re
 
 
 def parse_file(file, old=False):
@@ -27,21 +28,6 @@ GREEN: Callable[[str], str] = lambda text: f"\u001b[32m{text}\033\u001b[0m"
 
 def get_edits_string(old: str, new: str, short: bool = False) -> str:
     result = ""
-    if short:
-        add = 0
-        remove = 0
-        lines = difflib.unified_diff(old.splitlines(
-            keepends=True), new.splitlines())
-        for line in lines:
-            line = line.rstrip()
-            if line.startswith("+"):
-                add += 1
-            elif line.startswith("-"):
-                remove += 1
-            elif line.startswith("?"):
-                continue
-
-        return Fore.GREEN + f"Added {add}" + "      " + Fore.RED + f"Removed {remove}"
 
     lines = difflib.unified_diff(old.splitlines(
         keepends=True), new.splitlines(keepends=True))
@@ -54,7 +40,12 @@ def get_edits_string(old: str, new: str, short: bool = False) -> str:
             result += RED(line) + "\n"
         elif line.startswith("?"):
             continue
-
+    if short:
+        add = result.count("+")
+        remove = result.count("-")
+        print(GREEN('Added: '), GREEN(add) +
+              "     " + RED("Removed: "), RED(remove))
+        sys.exit(0)
     return result
 
 
