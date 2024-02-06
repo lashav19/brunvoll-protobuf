@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.FieldOptions {
+  string Description = 60000;         // Text describing the field
+  string Unit = 60001;                // Unit for the field value
+  double Default = 60002;             // Default value
+  double Min = 60010;                 // The lowest allowed value for this field
+  double Max = 60011;                 // The highest allowed value for this field
+  double Scale = 60012;               // Divisor used to scale for display
+  double ResetLowLimit = 60013;       // Reset value for AnalogSignal low limit
+  double ResetHighLimit = 60014;      // Reset value for AnalogSignal high limit
+  double ResetHighHighLimit = 60015;  // Reset value for AnalogSignal high high limit
+
+  bool Dp = 60020;            // This field is relevant for the DP product
+  int32 AccessLevel = 60030;  // AccessLevel
+  int32 Size = 60040;         // the size of array (temporary)
+  int32 Dimension = 60050;    // the Dimensions of array (temporary)
+}
+
+extend google.protobuf.EnumValueOptions {
+  int32 MaxExtensionIndex = 70000; // PTC: Highest allowed extended index. Must be 0<
+}

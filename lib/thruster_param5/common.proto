@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+import "field_options.proto";
+
+package brucon.configuration;
+
+message Position {
+  double x_position = 1 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+  double y_position = 2 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+  double z_position = 3 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+}
+
+message SerialInterface {
+  string controller_name = 1;
+  int32 com_port_index = 2;
+  int32 udp_port = 3;
+  string ip_address = 4; //Temporary for sending from simulator, before we find a better fix
+}
+
+message EthernetInterface {
+  string ip_address = 1;
+  uint32 port = 2;
+  string interface = 3;
+}

@@ -1,0 +1,687 @@
+syntax = "proto3";
+
+package brucon.configuration;
+
+import "field_options.proto";
+import "common.proto";
+
+// clang-format off
+// _has_ format is used to distinguish our own has_xxx parameters from protobufs auto generated functions
+message ThrusterParameters {
+  string thruster_name = 100 [(Description) = "Name of thruster. Keep it short so it fits the bridge panels, like Bow 1 or Stern, etc."];
+  ThrusterModelType thruster_type = 101 [(Description) = "Thruster model"];
+  string plant_number = 102 [(Description) = "Plant number"];
+  Position position = 103 [(Description) = "Thruster position"];
+
+  bool _has_controllable_pitch = 120 [(Description) = "Controllable or fixed pitch propeller"];
+  bool is_combi_thruster = 121 [(Description) = "Combined azimuth and tunnel thruster"];
+  bool _has_remote_io = 122 [(Description) = "Remote IO on bridge"];
+  bool _has_angle_gear = 123 [(Description) = "Thruster with angle gear"];
+  
+  CommandSignalType hardwired_bridge_start_stop_type = 300 [(Description) = "Start/stop configuration for hardwired bridge"];
+  bool map_external_bridge_azimuth_to_180 = 301 [(Description) = "Scale azimuth command/feedback to -180 to 180)"];
+  double start_sequence_timeout_length = 302 [(Description) = "Start sequence timeout length", (Default) = 180.0, (Min) = 0, (Max) = 360.0, (Unit) = "s"];
+  double stop_sequence_timeout_length = 303 [(Description) = "Stop sequence timeout length", (Default) = 30.0, (Min) = 0, (Max) = 360.0, (Unit) = "s"];
+  LocalControlSelectorType local_control_selector = 304 [(Description) = "Selector to enable local control"];
+
+  HPU hpu = 1 [(Description) = "Hydraulic power unit"];
+  HeaderTankSystem tank_system = 2  [(Description) = "Header tank system"];
+  DriveMotor drive_motor = 3 [(Description) = "Drive motor"];
+  ThrusterUnit thruster_unit = 4 [(Description) = "Thruster unit"];
+  RDT rdt = 6 [(Description) = "Rim driven thruster"];
+  CMS cms = 7 [(Description) = "Additional sensors for condition monitoring"];
+  ThrustCalculation thrust = 8 [(Description) = "Thrust calculation"];
+  Pitch pitch = 9 [(Description) = "Pitch control"];
+  LoadControl load_control = 10 [(Description) = "Load control"];
+  Interface interface = 11 [(Description) = "Interfaces"];
+  Azimuth azimuth = 12 [(Description) = "Azimuth control"];
+  AzimuthUnit azimuth_unit = 13 [(Description) = "Azimuth unit"];
+  Alarm alarm = 14 [(Description) = "Alarms"];
+  Fan fan = 15 [(Description) = "Fan"];
+  Mode mode = 16 [(Description) = "Modes"];
+  EmergencyStop emergency_stop = 17 [(Description) = "Emergency stops"];
+  CjcFilter cjc_filter = 18 [(Description) = "CJC filter"];
+  AngleGear angle_gear = 19 [(Description) = "Angle gear"];
+
+  message HPU {
+    Servo servo_pump_1 = 1 [(Description) = "Servo pump 1"];
+    Servo servo_pump_2 = 2 [(Description) = "Servo pump 2"];
+    Measurement servo_oil_temperature = 3 [(Description) = "Servo oil temperature", (ResetHighLimit) = 70.0, (Unit) = "°C"];
+    Measurement servo_tank_oil_level = 4 [(Description) = "Servo tank oil level", (Unit) = "cm"];
+    Measurement pressure_in = 5 [(Description) = "Pressure for retracting thruster", (Unit) = "bar"];
+    Measurement pressure_out = 6 [(Description) = "Pressure for lowering thruster", (ResetHighLimit) = 30.0, (Unit) = "bar"];
+    Locking locking = 7 [(Description) = "Locking mechanism"];
+    LowerRetractValve lower_retract_valve = 8 [(Description) = "Lower/retract valve"];
+    Starter starter = 9;
+    FilterCloggedSensor filter_clogged_sensor = 10 [(Description) = "Filter clogged sensor"];
+    Measurement working_pressure_pitch = 11 [(Description) = "Working pressure pitch", (Unit) = "bar"];
+    FilterCloggedSensor filter_clogged_sensor_pitch = 12 [(Description) = "Filter clogged sensor pitch"];
+    FilterCloggedSensor filter_clogged_sensor_rotation = 13 [(Description) = "Filter clogged sensor rotation"];
+
+    double servo_inconsistency_alarm_delay = 30 [(Description) = "Delay for inconsistency alarm servo pump 1/2", (Default) = 15.0, (Min) = 0, (Max) = 60.0, (Unit) = "s"];
+    double lowering_time_alarm_limit = 31 [(Description) = "Alarm limit lowering alarm", (Min) = 0, (Max) = 300.0, (Unit) = "s"];
+    ServoPumpPriorityType start_up_priority = 32 [(Description) = "Start-up priority"];
+
+    bool _has_stand_by_pump = 50 [(Description) = "Stand by pump configuration"];
+    bool run_in_parallel = 51 [(Description) = "Run servo pumps in parallel in DP"];
+
+    enum ServoPumpPriorityType {
+      RunningHours = 0;
+      Pump1 = 1;
+      Pump2 = 2;
+    }
+
+    message Starter {
+      bool is_star_delta = 50 [(Description) = "Star/delta starter for servo"];
+    }
+
+    message Locking {
+      LockingDevice device_1 = 1 [(Description) = "Locking device 1"];
+      LockingDevice device_2 = 2 [(Description) = "Locking device 2"];
+      bool _has_two_devices = 52 [(Description) = "Has two locking devices"];
+      MeasurementType device_sensor = 53 [(Description) = "Position sensors type for locking devices"];
+    }
+
+    message Servo {
+      Measurement pressure = 1 [(Description) = "Servo pressure", (Unit) = "bar"];
+    }
+    
+    message LowerRetractValve {
+      double holding_pressure_retracted = 30 [(Description) = "Command holding pressure retracted", (Default) = 6.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "volt"];
+      double high_speed_retract = 31 [(Description) = "Command high speed retraction", (Default) = 10.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "volt"];
+      double high_speed_lower = 32 [(Description) = "Command high speed lowering", (Default) = -10.0, (Min) = -10.0, (Max) = 0.0, (Unit) = "volt"];
+      double low_speed_lower = 33 [(Description) = "Command low speed lowering", (Default) = -6.0, (Min) = -10.0, (Max) = 0.0, (Unit) = "volt"];
+      double holding_pressure_lowered = 34 [(Description) = "Command holding pressure retracted", (Default) = -6.0, (Min) = -10.0, (Max) = 0.0, (Unit) = "volt"];
+    }
+    
+    message LockingDevice {
+      Measurement position = 1 [(Description) = "Position of locking device", (Unit) = "mm"];
+      double hysteresis = 2 [(Description) = "Locking device hysteresis", (Unit) = "mm"];
+    }
+
+    message FilterCloggedSensor {
+      double alarm_delay_minutes_after_start = 30 [(Description) = "Delay (minutes) after start for filter clogged alarm", (Default) = 30.0, (Min) = 0.0, (Max) = 60.0, (Unit) = "min"];
+      double alarm_delay = 31 [(Description) = "Delay (seconds) for alarm", (Default) = 60.0, (Min) = 0.0, (Max) = 200.0, (Unit) = "s"];
+      bool installed = 52 [(Description) = "Filter clogged sensor is installed"];
+    }
+  }
+  // end hpu
+
+  message HeaderTankSystem {
+    HeaderTank header = 2 [(Description) = "Header tank"];
+    HeaderTank eal_header = 3 [(Description) = "EAL header tank"];
+
+    double low_air_pressure_difference_alarm_limit = 30 [(Description) = "Alarm limit low pressure differnce eal/Header tank", (Default) = 0.0, (Min) = -0.5, (Max) = 0.5, (Unit) = "bar"];
+    double high_air_pressure_difference_alarm_limit = 31 [(Description) = "Alarm limit high pressure differnce eal/Header tank", (Default) = 0.4, (Min) = 0.0, (Max) = 0.5, (Unit) = "bar"];
+    double flush_header_high_limit = 32 [(Description) = "High limit flush header tank", (Unit) = "cm"];
+    double flush_header_low_limit = 33 [(Description) = "Low limit flush header tank", (Unit) = "cm"];
+    double pressure_alarm_delay = 34 [(Description) = "Delay for tank pressure alarms (eal/header)", (Default) = 2.0, (Min) = 2.0, (Max) = 120.0, (Unit) = "min"];
+
+    bool _has_eal = 52 [(Description) = "EAL tank installed"];
+  }
+  // end header tank system
+
+  message DriveMotor {
+    LoadSignal load = 1 [(Description) = "Load feedback signal in kW or A"];
+    LoadSignal load_2 = 2 [(Description) = "Load feedback 2 signal in kW or A"];
+    Measurement rpm_command = 3 [(Description) = "Rpm command signal"];
+    Measurement rpm_feedback = 4 [(Description) = "Rpm feedback signal"];
+    Measurement winding_u_temperature = 7 [(Description) = "Winding U temperature", (ResetHighLimit) = 145.0, (ResetHighHighLimit) = 155.0, (Unit) = "°C"];
+    Measurement winding_v_temperature = 8 [(Description) = "Winding V temperature", (ResetHighLimit) = 145.0, (ResetHighHighLimit) = 155.0, (Unit) = "°C"];
+    Measurement winding_w_temperature = 9 [(Description) = "Winding W temperature", (ResetHighLimit) = 145.0, (ResetHighHighLimit) = 155.0, (Unit) = "°C"];
+    Measurement bearing_de_temperature = 10 [(Description) = "Drive end bearing temperature", (Unit) = "°C"];
+    Measurement bearing_nde_temperature = 11 [(Description) = "Non drive end bearing temperature", (Unit) = "°C"];
+    Measurement torque = 12 [(Description) = "Torque feedback", (Unit) = "%"];
+    Measurement torque_limit = 13 [(Description) = "Torque limit to drive", (Unit) = "%"];
+    Starter starter = 14 [(Description) = "Drive motor starter"];
+    Autostop autostop = 15 [(Description) = "Autostop configuration"];
+    RpmFollowUpFailure rpm_follow_up_failure = 16  [(Description) = "Rpm follow-up failure configuration"];
+    Measurement torque_percent = 17 [(Description) = "Torque output for indication/interface", (Unit) = "%"];
+    Measurement rpm_percent = 18 [(Description) = "Rpm output for indication/interface", (Unit) = "%"];
+    Measurement load_percent = 19 [(Description) = "Load output for indication/interface", (Unit) = "%"];
+
+    MaxRpmGainSetting max_rpm_gain_lowered = 30 [(Description) = "Rpm gain in fixed pitch mode - lowered", (Unit) = "RPM"];
+    MaxRpmGainSetting max_rpm_gain_retracted = 31 [(Description) = "Rpm gain in fixed pitch mode - retracted", (Unit) = "RPM"];
+    double idle_rpm = 32 [(Description) = "Rpm at idle", (Unit) = "RPM"];
+    double fixed_rpm = 33 [(Description) = "Rpm at fixed speed", (Unit) = "RPM"];
+    ClutchControlType clutch_control = 34 [(Description) = "Clutch control type", (Default) = 0];
+
+    bool _has_rpm_control = 50 [(Description) = "Rpm control or fixed speed"];
+    bool bipolar_rpm = 51 [(Description) = "Bipolar or unipolar rpm"];
+    WindingsMonitoringType winding_monitoring = 52 [(Description) = "Winding temperatures monitoring"];
+    MeasurementType bearing_monitoring = 53 [(Description) = "Bearing temperatures monitoring"];
+    bool auto_restart = 54 [(Description) = "Restart after blackout"];
+    DigitalInput motor_cooler_leakage_sensor = 55 [(Description) = "Motor cooler leakage sensor"];
+    bool is_diesel_engine = 56 [(Description) = "Thruster is run by diesel engine"];
+
+    enum ClutchControlType {
+      ClutchControlNotConfigured = 0;
+      ClutchControlSimple = 1;
+    }
+
+    message Starter {
+      StarterType starter_type = 1 [(Description) = "Starter type"];
+  
+      double start_pulse_length = 30 [(Description) = "Start pulse length", (Default) = 2.0, (Min) = 0.0, (Max) = 20.0, (Unit) = "s"];
+      CircuitBreakerControlType circuit_breaker_control = 31 [(Description) = "Circuit breaker control type", (Default) = 0];
+  
+      bool _has_ethernet_interface = 50 [(Description) = "Ethernet or hardwired"];
+      DigitalInput alarm = 51 [(Description) = "Alarm configuration"];
+      DigitalInput failure = 52 [(Description) = "Failure configuration"];
+  
+      bool is_auto_transformer = 53 [(Description) = "Auto transformer starter"];
+      bool _has_active_front_end = 55 [(Description) = "Active front end installed (Danfoss)"];
+      bool _has_cooling_unit = 56 [(Description) = "Cooling unit installed (Danfoss)"];
+      bool continuous_interlock_signal = 57 [(Description) = "Hold interlock after running"];
+      bool _has_heating_monitoring = 58 [(Description) = "Heating monitoring"];
+
+      enum StarterType {
+        Drive = 0;
+        SoftStarter = 1;
+        FrequencyStart = 2;
+        Vacon = 3;
+        BrunvollLHD = 4;
+      }
+
+      enum CircuitBreakerControlType {
+        NotConfigured = 0;
+        StartUpSequence = 1;
+        ManualButtons = 2;
+      }
+    }
+
+    message LoadSignal {
+      Measurement feedback = 1 [(Description) = "Load feedback"];
+      UnitType unit = 2 [(Description) = "Load signal unit"];
+      SetutType setup = 3 [(Description) = "Load signal setup"];
+
+      enum UnitType {
+        Ampere = 0;
+        kW = 1;
+      }
+
+      enum SetutType {
+        NotInstalled = 0;
+        Monitoring = 1;
+        ControlAndMonitoring = 2;
+      }
+    }
+
+    enum WindingsMonitoringType {
+      WindingsNotMonitored = 0;
+      WindingsHardwired = 1;
+      WindingsFromStarter = 2;
+    }
+
+    message MaxRpmGainSetting {
+      double positive = 1 [(Description) = "Max rpm positive - fixed pitch", (Unit) = "RPM"];
+      double negative = 2 [(Description) = "Max rpm negative - fixed pitch", (Unit) = "RPM"];
+    }
+
+    message Autostop {
+      double servo_stopped_delay = 30 [(Description) = "Autostop delay when servo has stopped", (Min) = 0.0, (Max) = 20.0, (Unit) = "s"];
+      bool pitch_feedback_failure = 50 [(Description) = "Autostop when pitch feedback failure"];
+      bool pitch_follow_up_failure = 51 [(Description) = "Autostop when pitch follow-up failure"];
+      bool rpm_feedback_failure = 52 [(Description) = "Autostop when rpm feedback failure"];
+      bool rpm_follow_up_failure = 53 [(Description) = "Autostop when rpm follow-up failure"];
+      bool servo_stopped_failure = 54 [(Description) = "Autostop when servo is stopped"];
+    }
+
+    message RpmFollowUpFailure {
+      double alarm_limit = 30 [(Description) = "Alarm limit for rpm follow up alarm (delta command/feedback)", (Default) = 200.0, (Min) = 0.0, (Max) = 400.0, (Unit) = "RPM"];
+      double alarm_delay = 31 [(Description) = "Delay for Rpm follow up alarm", (Default) = 20.0, (Min) = 0.0, (Max) = 120.0, (Unit) = "s"];
+      double alarm_off_delay = 32 [(Description) = "Delay for deactivating Rpm follow up alarm", (Default) = 5.0, (Min) = 0.0, (Max) = 120.0, (Unit) = "s"];
+      FailureActionType action = 50 [(Description) = "Action when failure"];
+
+      enum FailureActionType {
+        NoResponse = 0;
+        ThrustToZero = 1;
+      }
+    }
+  }
+  // end drive motor
+
+
+  message ThrusterUnit {
+    Measurement lubrication_oil_temperature = 1 [(Description) = "Lubrication oil temperaure", (ResetHighLimit) = 65.0, (Unit) = "°C"];
+    Measurement gear_oil_temperature = 2 [(Description) = "Gear oil temperaure", (ResetHighLimit) = 65.0, (Unit) = "°C"];
+    Measurement pressure_s1 = 3 [(Description) = "Oil pressure S1", (Unit) = "bar"];
+    Measurement pressure_s2 = 4 [(Description) = "Oil pressure S2", (Unit) = "bar"];
+    double cooling_pump_lubrication_oil_start_delay = 30 [(Description) = "Start delay for cooling pump lubrication oil", (Default) = 1800.0, (Min) = 0.0, (Max) = 3600.0, (Unit) = "s"];
+
+    bool _has_cooling_pump_lubrication_oil = 54 [(Description) = "Configuration of cooiling pump lubrication oil"];
+  }
+  // end thruster unit
+
+
+  message RDT {
+    Measurement motor_inlet_temperature = 1 [(Description) = "Motor inlet temperature", (ResetHighLimit) = 100.0, (Unit) = "C"];
+    Measurement motor_outlet_temperature = 2 [(Description) = "Motor outlet temperature", (ResetHighLimit) = 100.0, (Unit) = "C"];
+    Measurement motor_inlet_pressure = 3 [(Description) = "Motor outlet pressure", (ResetLowLimit) = 1.1, (ResetHighLimit) = 1.9, (Unit) = "bar"];
+    Measurement motor_outlet_pressure = 4 [(Description) = "Motor outlet pressure", (ResetLowLimit) = 1.1, (ResetHighLimit) = 1.9, (Unit) = "bar"];
+
+    bool high_pressure_shut_down_circulation_pump = 50 [(Description) = "Stop circulation pump when high pressure"];
+  }
+  // end rdt
+
+  message CMS {
+    Measurement aqua_sensor_oil_temperature = 1 [(Description) = "Oil temperature from aqua sensor", (Unit) = "C"];
+    Measurement oil_quality = 2 [(Description) = "Oil quality", (Unit) = "%"];
+    Measurement oil_saturation = 3 [(Description) = "Oil saturation", (Unit) = "%"];
+  }
+  // end red
+
+  message ThrustCalculation {
+    MaxThrust max_thrust_lowered = 1 [(Description) = "Lowered"];
+    MaxThrust max_thrust_retracted = 2 [(Description) = "Retracted"];
+
+    double propeller_diameter = 30 [(Description) = "Propeller diameter", (Unit) = "m"];
+    int32 gear_ratio_multiplier = 31 [(Description) = "Gear exchange ratio motor/propeller-rpm, multiplier"];
+    int32 gear_ratio_divisor = 32 [(Description) = "Gear exchange ratio motor/propeller-rpm, devisor"];
+
+    bool asymmetrical_propeller_blade = 50 [(Description) = "Asymmetrical propeller blade"];
+
+    message MaxThrust {
+      double positive = 1 [(Description) = "Max thrust (kN) - positive", (Default) = 100.0, (Unit) = "kN"];
+      double negative = 2 [(Description) = "Max. thrust (kN) - negative", (Default) = 100.0, (Unit) = "kN"];
+      double correction_factor = 3 [(Description) = "Thrust correction factor"];
+    }
+  }
+  // end thrust calculation
+
+  message Pitch {
+    Valve valve = 1;
+    Control control = 2;
+    Feedback feedback = 3;
+
+    message Feedback {
+      double deviation_alarm_limit = 30 [(Description) = "Alarm limit deviation feedback 1/2", (Default) = 1.0, (Min) = 0, (Max) = 5.0, (Unit) = "°"];
+      FeedbackSeletorType selector = 31 [(Description) = "Feedback selector"];
+    }
+  
+    message Control {
+      PitchGain gain_lowered = 1 [(Description) = "Pitch gain setting lowered"];
+      PitchGain gain_retracted = 2 [(Description) = "Pitch gain setting lowered"];
+      Measurement generator_frequency = 3 [(Description) = "Generator frequency", (Unit) = "Hz"];
+  
+      double follow_up_failure_delay = 30 [(Description) = "Delay for pitch follow up failure", (Default) = 1.0, (Min) = 0.0, (Max) = 4.0, (Unit) = "s"];
+      double follow_up_failure_alarm_limit = 31 [(Description) = "Alarm limit pitch follow up alarm", (Default) = 2.0, (Min) = 0.0, (Max) = 4.0, (Unit) = "°"];
+      double zero_thrust_angle = 32 [(Description) = "Pitch angle for zero thrust", (Unit) = "°"];
+  
+      bool _has_two_gain_settings = 50 [(Description) = "Pitch gain configuration"];
+      GainSettingModeType gain_setting_2 = 51 [(Description) = "Pitch gain mode 2"];
+      bool compensate_drifting_in_transit = 52 [(Description) = "Set pitch to zero periodically"];
+    
+      message PitchGain {
+        PitchGainSetting reference_fixed_rpm = 1 [(Description) = "Reference max values pitch in fixed rpm mode", (Unit) = "°"];
+        PitchGainSetting reference_combinator = 2 [(Description) = "Reference max values pitch in combinator mode", (Unit) = "°"];
+        PitchGainSetting setting_1 = 3 [(Description) = "Setting 1, max frequency", (Unit) = "°"];
+        PitchGainSetting setting_2 = 4 [(Description) = "Setting 2, min frequency", (Unit) = "°"];
+      }
+  
+      message PitchGainSetting {
+        double max_positive = 1 [(Description) = "Maximum positive pitch setting", (Default) = 14.80, (Min) = 1.0, (Max) = 28.00, (Unit) = "°"];
+        double max_negative = 2 [(Description) = "Maximum negative pitch setting", (Default) = -14.80, (Min) = -28.00, (Max) = -1.0, (Unit) = "°"];
+      }
+
+      enum GainSettingModeType {
+        LinearWithDelta = 0;
+        TwoModes = 1;
+      }
+
+    }
+    message Valve {
+      double deadband = 1 [(Description) = "Deadband", (Default) = 0.1, (Min) = 0.0, (Max) = 5.0, (Unit) = "°"];
+      double offset = 2 [(Description) = "Offset to valve control signal", (Min) = 0.0, (Max) = 5.0, (Unit) = "volt"];
+      double ramp = 3 [(Description) = "Ramp value", (Default) = 4.0, (Min) = 2.0, (Max) = 30.0, (Unit) = "°"];
+      double max_speed = 4 [(Description) = "Maximum valve command", (Default) = 10.0, (Min) = 0.1, (Max) = 10.0, (Unit) = "volt"];
+    }
+  }
+  // end pitch
+
+  message LoadControl {
+    double thrust_reduction_limit_negative = 30 [(Description) = "Load reduction negative side (fast step)", (Default) = -100.0, (Min) = -100.0, (Max) = 0.0, (Unit) = "%"];
+    double thrust_reduction_limit_positive = 31 [(Description) = "Load reduction positive side (fast step)", (Default) = 100.0, (Min) = 0.0, (Max) = 100.0, (Unit) = "%"];
+    double max_load = 32 [(Description) = "Max load in load (A/kW)", (Unit) = "A/kW"];
+    double max_overload = 33 [(Description) = "Max allowed overload (%)", (Default) = 0.0, (Min) = 0.0, (Max) = 100.0, (Unit) = "%"];
+    double max_load_reduced_mode = 34 [(Description) = "Max load in load mode 2 (A/kW)", (Unit) = "A/kW"];
+    OverloadAlarmType overload_alarm = 35 [(Description) = "Configuration of overload alarm"];
+    double overload_alarm_delay = 36 [(Description) = "Overload alarm delay", (Default) = 10.0, (Min) = 3.0, (Unit) = "s"];
+    ReductionType reduction_alternative = 37 [(Description) = "Reduction type when power reduce input is high"];
+
+    bool _has_reduced_mode = 52 [(Description) = "Configuration of reduced load mode"];
+
+    enum ReductionType {
+      ReductionNotInUse = 0;
+      ThrustLimitation = 1;
+      PitchReduction = 2;
+    }
+
+    enum OverloadAlarmType {
+      OverloadAlarmNotInUse = 0;
+      NormallyClosed = 1;
+      NormallyOpen = 2;
+      Internal = 3;
+    }
+  }
+  // end load control
+
+  message Interface {
+    ExternalInterface dp = 1 [(Description) = "Dynamic positioning interface"];
+    ExternalInterface joystick = 2 [(Description) = "Joystick interface"];
+    ExternalInterface autopilot = 3 [(Description) = "Autopilot interface"];
+    ExternalInterface bridge = 4 [(Description) = "Hardwired bridge interface"];
+    ShipSpeed ship_speed = 5 [(Description) = "Ship speed interface"];
+    IasInterface ias = 6 [(Description) = "Integrated alarm system interface"];
+    NmeaInterface conning = 7 [(Description) = "Conning interface"];
+    NmeaInterface vdr = 8 [(Description) = "Voyage data recorder interface"];
+    PmsInterface pms = 9 [(Description) = "Power managment system interface"];
+
+    message ExternalInterface {
+      Scaling3Points thrust = 1 [(Description) = "Hardwired thrust command signal", (Unit) = "mA"]; 
+      Scaling3Points azimuth = 2 [(Description) = "Hardwired azimuth command signal", (Unit) = "mA"]; 
+      InterfaceType type = 3 [(Description) = "External interface type"]; 
+      ControllerSourceType controller_source = 4 [(Description) = "Interface signal source. A1 = thruster room, A2 = Bridge", (Default) = 0];
+      SerialInterface serial_interface = 5 [(Description) = "Serial interface"];
+  
+      double deadband_thrust = 32 [(Description) = "Deadband thrust command", (Default) = 3.9, (Min) = 0.0, (Max) = 10.0, (Unit) = "%"];
+      double deadband_thrust_zero_command = 33 [(Description) = "Deadband zero thrust command", (Default) = 1.0, (Min) = 0.5, (Max) = 10.0, (Unit) = "%"];
+      double deadband_azimuth = 34 [(Description) = "Deadband azimuth command", (Default) = 5.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "°"];
+    }
+
+    message IasInterface { 
+      InterfaceType type = 1 [(Description) = "IAS interface", (Default) = 4];
+      SerialInterface serial_interface = 2 [(Description) = "Serial interface"];
+      ControllerSourceType controller_source = 3 [(Description) = "Interface signal source. A1 = thruster room, A2 = Bridge", (Default) = 0];
+    }
+  
+    message NmeaInterface {
+      SerialInterface serial_interface = 1 [(Description) = "Serial interface"];
+      ControllerSourceType controller_source = 2 [(Description) = "Interface signal source. A1 = thruster room, A2 = Bridge", (Default) = 0];
+      bool enabled = 50 [(Description) = "Enable NMEA interface", (Default) = 1];
+    }
+
+    message ShipSpeed {
+      Measurement ship_speed = 1 [(Description) = "Ship speed interface", (Unit) = "knots"];
+      SerialInterface serial_interface = 2 [(Description) = "Serial interface"];
+      NmeaShipSpeedTelegramType nmea_telegram = 3 [(Description) = "Telegram type accepted for ship speed"];
+      ShipSpeedSignalType signal_type = 4 [(Description) = "Ship speed signal type, NMEA or analog"];
+      ControllerSourceType controller_source = 5 [(Description) = "Interface signal source. A1 = thruster room, A2 = Bridge", (Default) = 0];
+
+      bool nmea_enabled = 50 [(Description) = "Enable NMEA ship speed interface from GPS / Speedlog", (Default) = 1];
+      bool nmea_time_enabled = 51 [(Description) = "Enable NMEA time interface from GPS", (Default) = 1];
+
+      enum NmeaShipSpeedTelegramType {
+        VTG = 0;
+        VBW = 1;
+        VHW = 2;
+      }
+      enum ShipSpeedSignalType {
+        NMEA = 0;
+        Analog = 1;
+      }
+    }
+
+    message SerialInterface {
+      uint32 port = 30 [(Description) = "Serial port index (0=COM1, 1=COM2, etc)", (Default) = 0];
+    }
+
+    message PmsInterface {
+      Measurement power_available = 1 [(Description) = "Power available", (Unit) = "kW"];
+        
+      bool use_override = 50 [(Description) = "Enables a digital signal to override PMS interface"];
+      bool inhibit_start_analog = 51 [(Description) = "Block start when power available is below high limit"];
+  
+    }
+
+    enum InterfaceType {
+      Disabled = 0;
+      Hardwired = 1;
+      ModbusUdp = 2;
+      ModbusRtu = 3;
+      ModbusTcp = 4;
+      Nmea = 5;
+    }
+  }
+  // end interface
+
+  message Azimuth {
+    Valve valve = 1;
+    Feedback feedback = 2;
+    Limitation limitation = 3;
+    Control control = 4;
+
+    message Valve {
+      double deadband = 1 [(Description) = "Deadband", (Default) = 0.3, (Min) = 0.0, (Max) = 5.0, (Unit) = "°"];
+      double offset = 2 [(Description) = "Offset to valve control signal", (Default) = 2.2, (Min) = 0.0, (Max) = 5.0, (Unit) = "volt"];
+      double ramp = 3 [(Description) = "Ramp value", (Default) = 15.0, (Min) = 0.0, (Max) = 30.0, (Unit) = "°"];
+      double max_speed = 4 [(Description) = "Maximum valve command", (Default) = 5.0, (Min) = 0.1, (Max) = 10.0, (Unit) = "volt"];
+    }
+
+    message Feedback {
+      double deviation_alarm_limit = 30 [(Description) = "Alarm limit deviation azimuth feedback 1/2", (Default) = 5.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "°"];
+      double feedback_2_offset = 31 [(Description) = "Offset azimuth feedback 2. Used when zero set is connected to 25%mA and feedback1/2 toggles when they enter 4/20mA area. Zero value disables the functionality", (Default) = 0.0, (Min) = 0.0, (Max) = 359.9, (Unit) = "°"];
+      FeedbackSeletorType selector = 32 [(Description) = "Feedback selector"];
+    }
+  
+    message Limitation {
+      ForbiddenZone forbidden_zone = 1 [(Description) = "Forbidden zones"];
+      ShipSpeedLimitation ship_speed = 2 [(Description) = "Ship speed limitations"];
+    }
+
+    message Control {
+      ControlType type = 1 [(Description) = "Azimuth control configuration"];
+      uint32 number_of_drives = 30 [(Description) = "Number of drives for electric rotation", (Min) = 2, (Max) = 4];
+      MeasurementType motor_temperature_sensor = 31 [(Description) = "Temperature sensor in rotation motor"];
+
+      enum ControlType {
+        Electric = 0;
+        Hydraulic = 1;
+      }
+    }
+  
+    message ShipSpeedLimitation {
+      bool disable_limit_in_dp = 50 [(Description) = "Deactivate ship speed limit in DP"];
+    }
+  
+    message ForbiddenZone {
+      AngleLimitation zone1 = 1 [(Description) = "Forbidden zone 1 (fwd/stbd.)"];
+      AngleLimitation zone2 = 2 [(Description) = "Forbidden zone 2 (aft/port)"];
+      ForbiddenZoneLimitType limit_type = 3 [(Description) = "Limit method when thruster is in a forbidden zone"];
+  
+      bool use_override = 50 [(Description) = "Digtal input from other thruster overrides"];
+  
+      enum ForbiddenZoneLimitType {
+        Thrust = 0;
+        Torque = 1;
+      }
+    }
+
+    message AngleLimitation {
+      double min_angle = 1 [(Description) = "Min. angle value", (Unit) = "°"];
+      double max_angle = 2 [(Description) = "Max. angle value", (Unit) = "°"];
+      double limit = 3 [(Description) = "Limit"];
+  
+      bool enabled = 50 [(Description) = "Limit is enabled"];
+    }
+  }
+  // end azimuth
+
+  message AzimuthUnit {
+    Measurement gear_oil_temperature = 1 [(Description) = "Gear oil temperaure", (ResetLowLimit) = 35.0, (ResetHighLimit) = 50.0, (Unit) = "°C"];
+    double rotation_brake_on_delay = 30 [(Description) = "Rotation brake delay", (Default) = 60.0, (Min) = 0.0, (Unit) = "s"];
+    double in_pos = 31 [(Description) = "Position to retract thruster", (Default) = 0.0, (Min) = 0.0, (Max) = 359.9, (Unit) = "°"];
+    DuctTypeType duct_type = 32;
+
+    bool _has_cooling_pump_gear = 52 [(Description) = "Cooling pump installed"];
+  }
+  // end azimuth
+
+  message Alarm {
+    double pulse_length = 30 [(Description) = "Alarm pulse length", (Default) = 2.0, (Min) = 0.0, (Max) = 60.0, (Unit) = "s"];
+
+    bool _has_power_failure_bridge = 50 [(Description) = "Enable alarm: bridge cabinet power failure", (Default) = 0];
+    bool _has_power_failure_thruster_room = 51 [(Description) = "Enable alarm: thruster room power failure", (Default) = 1];
+    bool _has_earth_fault = 52 [(Description) = "Enable alarm: earth fault"];
+    bool _has_thermo_fuse_main_bridge = 53 [(Description) = "Enable alarm: thermo fuse main bridge"];
+  }
+  // end alarm
+
+  message CjcFilter {
+    double alarm_delay = 30 [(Description) = "Alarm delay CJC filter", (Default) = 1.0, (Min) = 0.0, (Max) = 60.0, (Unit) = "min"];
+    double circ_filter_pump_delay = 31 [(Description) = "Delay for engaging circulation pumpe lubrication oil/CJC filter pump", (Default) = 900.0, (Min) = 0.0, (Max) = 100000, (Unit) = "s"];
+    CircFilterModeType circ_filter_mode = 32 [(Description) = "Mode circulation pumpe lubrication oil/CJC filter pump"];
+    bool installed = 50 [(Description) = "CJC filter installed"];
+    bool _has_alarm = 51 [(Description) = "Alarm for CJC filter"];
+
+    enum CircFilterModeType {
+      DriveMotorStart = 0;
+      Continuous = 1;
+    }
+  }
+  // end cjc filter
+
+  message Fan {
+    CommandSignalType start_stop_type = 1 [(Description) = "Start/stop signal type fan"];
+    bool installed = 50 [(Description) = "Fan installed"];
+  }
+  // end fan
+
+  message Mode {
+    double low_gain_setting = 30 [(Description) = "Max thrust command in low gain mode", (Default) = 50.0, (Min) = 0, (Max) = 100.0, (Unit) = "%"];
+    double power_mode_load_limit = 31 [(Description) = "Load limit to enable power mode", (Default) = 40.0, (Min) = 0, (Max) = 100.0, (Unit) = "%"];
+
+    bool _has_power_mode = 50 [(Description) = "Power mode is used"];
+  }
+  // end mode
+
+  message EmergencyStop {
+    DigitalInput thruster_room = 50 [(Description) = "Emergency stop in thruster room"];
+    DigitalInput bridge = 51 [(Description) = "Emergency stop on bridge"];
+  }
+  // end emergencey stop
+
+  message AngleGear {
+    HeaderTank tank = 30 [(Description) = "Angle gear tank"];
+    Measurement nozzle_pressure = 31 [(Description) = "Pressure angle gear nozzle", (ResetLowLimit) = 7.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "bar"];
+    Measurement lubrication_pump_pressure = 32 [(Description) = "Lubrication pump pressure angle gear", (ResetLowLimit) = 8.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "bar"];
+    Measurement mechanical_pump_pressure = 33 [(Description) = "Mechanical pump pressure angle gear", (ResetLowLimit) = 8.0, (Min) = 0.0, (Max) = 10.0, (Unit) = "bar"];
+    double low_level_alarm_delay = 40 [(Description) = "Delay for low level alarm", (Default) = 2.0, (Min) = 0.0, (Max) = 30.0, (Unit) = "s"];
+    double high_level_alarm_delay = 41 [(Description) = "Delay for high level alarm", (Default) = 2.0, (Min) = 0.0, (Max) = 30.0, (Unit) = "s"];
+    double fill_delay = 42 [(Description) = "Delay for filling the angle gear when stopped", (Default) = 3.0, (Min) = 0.0, (Max) = 6.0, (Unit) = "days"];
+    double low_air_pressure_difference_alarm_limit = 43 [(Description) = "Alarm limit low pressure differnce eal/angle gear", (Default) = 0.0, (Min) = -0.5, (Max) = 0.5, (Unit) = "bar"];
+    double high_air_pressure_difference_alarm_limit = 44 [(Description) = "Alarm limit high pressure differnce eal/angle gear", (Default) = 0.4, (Min) = 0.0, (Max) = 0.5, (Unit) = "bar"];
+    double low_level_drain = 45 [(Description) = "Low level drain", (Unit) = "cm"];
+    double fill_level = 46 [(Description) = "Fill level", (Unit) = "cm"];
+    double high_level_drain = 47 [(Description) = "High level drain", (Unit) = "cm"];
+    double high_level_operation_alarm_limit = 48 [(Description) = "High level alarm limit when thruster is in operation", (Unit) = "cm"];
+    double start_pump_rpm_limit = 49 [(Description) = "Start lubrication pump below this limit", (Unit) = "rpm"];
+    double start_pump_temperature_limit = 50 [(Description) = "Start lubrication pump above this limit", (Unit) = "°C"];
+    double stop_pump_temperature_limit = 51 [(Description) = "Stop lubrication pump below this limit", (Unit) = "°C"];
+    double start_pump_pressure_limit = 52 [(Description) = "Start lubrication pump below this limit", (Unit) = "bar"];
+    double stop_pump_pressure_limit = 53 [(Description) = "Stop lubrication pump above this limit", (Unit) = "bar"];
+    int32 gear_ratio_multiplier = 54 [(Description) = "Gear exchange ratio motor/propeller-rpm, multiplier"];
+    int32 gear_ratio_divisor = 55 [(Description) = "Gear exchange ratio motor/propeller-rpm, devisor"];
+
+    bool lubrication_pump_uses_rpm_control = 70;
+    bool lubrication_pump_uses_temperature_control = 71;
+  }
+  // end angle gear
+
+  message Scaling3Points {
+    double min_raw = 1 [(Description) = "Minimum milliampere signal value", (Default) = 4.0, (Unit) = "mA"];
+    double mid_raw = 2 [(Description) = "Middle milliampere signal value", (Default) = 12.0, (Unit) = "mA"];
+    double max_raw = 3 [(Description) = "Maximum milliampere signal value", (Default) = 20.0, (Unit) = "mA"];
+    double min_engineering = 4 [(Description) = "Minimum engineering value"];
+    double mid_engineering = 5 [(Description) = "Middle engineering value"];
+    double max_engineering = 6 [(Description) = "Maximum engineering value"];
+  }
+
+  message Measurement {
+    double min_raw = 1 [(Description) = "Minimum raw signal value"];
+    double max_raw = 2 [(Description) = "Maximum raw signal value"];
+    double min_engineering = 3 [(Description) = "Minimum engineering value"];
+    double max_engineering = 4 [(Description) = "Maximum engineering value"];
+    double low_limit = 5 [(Description) = "Low limit"];
+    double high_limit = 6 [(Description) = "High limit"];
+    double high_high_limit = 7 [(Description) = "High high limit"];
+
+    MeasurementType measurement_type = 30 [(Description) = "Measurement type", (Default) = 0];
+    AnalogSignalType analog_signal_type = 31 [(Description) = "Signal type", (Default) = 0];
+
+    enum AnalogSignalType {
+      Milliampere = 0;
+      Voltage = 1;
+    }
+  }
+
+  message DigitalInput {
+    bool installed = 50 [(Description) = "Input is installed"];
+    bool is_nc = 51 [(Description) = "Used as normally closed"];
+  }
+
+  message HeaderTank {
+    Measurement air_pressure = 1 [(Description) = "Air pressure", (ResetLowLimit) = 0.3, (ResetHighLimit) = 0.8, (Unit) = "bar"];
+    Measurement oil_level = 2 [(Description) = "Oil level", (Unit) = "cm"];
+    Measurement temperature = 3 [(Description) = "Oil temperature", (Unit) = "°C"];
+    double level_alarm_delay = 30 [(Description) = "Delay for level alarms", (Unit) = "s"];
+    bool is_pressurized = 50 [(Description) = "Pressurized tank"];
+}
+
+  enum ControllerSourceType {
+    ControllerSourceA1 = 0;
+    ControllerSourceA2 = 1;
+  }
+
+  enum CommandSignalType {
+    CommandSignalToggle = 0;
+    CommandSignalPulse = 1;
+  }
+
+  enum FeedbackSeletorType {
+    FeedbackSelectorBestEffort = 0;
+    FeedbackSelectorSplitControlAndIndication = 1;
+  }
+  
+  enum DuctTypeType {
+    DuctType19A = 0;
+    DuctTypeN37 = 1;
+    DuctTypeN38 = 2;
+    DuctType19A_A100 = 3;
+  }
+
+  enum ThrusterModelType {
+    undefined = 0;
+    FU37 = 1;
+    FU45 = 2;
+    FU63 = 3;
+    FU74 = 4;
+    FU80 = 5;
+    FU93 = 6;
+    FU100 = 7;
+    FU115 = 8;
+    AR63 = 9;
+    AR80 = 10;
+    AR93 = 11;
+    AR100 = 12;
+    RDT1000 = 13;
+    AR115 = 14;
+    AUP100 = 15;
+    RDT1800 = 16;
+    RDT2100 = 17;
+    AUP63 = 18;
+  }    
+
+  enum LocalControlSelectorType {
+    LocalControlSelectorGuiButton = 0;
+    LocalControlSelectorSwitch = 1;
+  }
+
+  enum MeasurementType {
+    MeasurementNotInstalled = 0;
+    MeasurementAnalog = 1;
+    MeasurementDigital = 2;
+    MeasurementAnalogAndDigital = 3;
+  }
+
+}

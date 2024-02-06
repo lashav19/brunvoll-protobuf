@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+import "field_options.proto";
+
+package brucon.configuration;
+
+message Position {
+  double x_position = 1 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+  double y_position = 2 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+  double z_position = 3 [(Unit) = "m", (Description) = "X-axis forward, y-axis starboard and z-axis down. (0,0,0) is at midship and keel"];
+}
+
+message SerialInterface {
+  string controller_name = 1;
+  int32 com_port_index = 2;
+  int32 udp_port = 3;
+  string ip_address = 4; //Temporary for sending from simulator, before we find a better fix
+}
+
+message EthernetInterface {
+  string ip_address = 1;
+  uint32 port = 2;
+  string interface = 3;
+}
+
+enum LedColor {
+  Unspecified = 0;
+  Green = 1;
+  Orange = 2;
+  Red = 3;
+}
+
+enum UnitType {
+  UnitType_Unspecified = 0;
+  UnitType_Percent = 1;
+  UnitType_RPM = 2;
+  UnitType_Degrees = 3;
+  UnitType_Seconds = 11;
+  UnitType_Hertz = 12;
+  UnitType_Celsius = 13;
+  UnitType_Bar = 14;
+  UnitType_MilliMeter = 21;
+  UnitType_CentiMeter = 22;
+  UnitType_Meter = 23;
+  UnitType_MeterSquared = 24;
+  UnitType_MetersPerSecond = 31;
+  UnitType_Knots = 32;
+  UnitType_Volt = 41;
+  UnitType_MilliAmpere = 42;
+  UnitType_Ampere = 43;
+  UnitType_KiloWatt = 44;
+  UnitType_KiloNewton = 45;
+}

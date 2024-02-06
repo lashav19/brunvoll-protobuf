@@ -1,0 +1,1004 @@
+thruster_name: "Bow"
+thruster_type: FU63
+plant_number: "12293"
+position {
+  x_position: 0
+  y_position: 0
+  z_position: 0
+}
+_has_controllable_pitch: true
+is_combi_thruster: false
+_has_remote_io: false
+_has_angle_gear: false
+hardwired_bridge_start_stop_type: CommandSignalToggle
+map_external_bridge_azimuth_to_180: false
+start_sequence_timeout_length: 180
+stop_sequence_timeout_length: 30
+local_control_selector: LocalControlSelectorGuiButton
+hpu {
+  servo_pump_1 {
+    pressure {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 100
+      low_limit: 8
+      high_limit: 45
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+  }
+  servo_pump_2 {
+    pressure {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 100
+      low_limit: 18
+      high_limit: 165
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+  }
+  servo_oil_temperature {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: -200
+    max_engineering: 850
+    low_limit: 0
+    high_limit: 70
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  servo_tank_oil_level {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: 0
+    max_engineering: 100
+    low_limit: 20
+    high_limit: 80
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  pressure_in {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: 0
+    max_engineering: 200
+    low_limit: 0
+    high_limit: 95
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  pressure_out {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: 0
+    max_engineering: 200
+    low_limit: 0
+    high_limit: 30
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  locking {
+    device_1 {
+      position {
+        min_raw: 4
+        max_raw: 20
+        min_engineering: 0
+        max_engineering: 0
+        low_limit: 0
+        high_limit: 0
+        high_high_limit: 0
+        measurement_type: MeasurementNotInstalled
+        analog_signal_type: Milliampere
+      }
+      hysteresis: 0
+    }
+    device_2 {
+      position {
+        min_raw: 0
+        max_raw: 0
+        min_engineering: 0
+        max_engineering: 0
+        low_limit: 0
+        high_limit: 0
+        high_high_limit: 0
+        measurement_type: MeasurementNotInstalled
+        analog_signal_type: Milliampere
+      }
+      hysteresis: 0
+    }
+    _has_two_devices: false
+    device_sensor: MeasurementDigital
+  }
+  lower_retract_valve {
+    holding_pressure_retracted: 6
+    high_speed_retract: 10
+    high_speed_lower: -10
+    low_speed_lower: -6
+    holding_pressure_lowered: -6
+  }
+  starter {
+    is_star_delta: false
+  }
+  filter_clogged_sensor {
+    alarm_delay_minutes_after_start: 30
+    alarm_delay: 60
+    installed: true
+  }
+  working_pressure_pitch {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  filter_clogged_sensor_pitch {
+    alarm_delay_minutes_after_start: 0
+    alarm_delay: 0
+    installed: false
+  }
+  filter_clogged_sensor_rotation {
+    alarm_delay_minutes_after_start: 0
+    alarm_delay: 0
+    installed: false
+  }
+  servo_inconsistency_alarm_delay: 15
+  lowering_time_alarm_limit: 180
+  start_up_priority: Pump1
+  _has_stand_by_pump: false
+  run_in_parallel: false
+}
+tank_system {
+  header {
+    air_pressure {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 2.5
+      low_limit: 0.3
+      high_limit: 0.8
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    oil_level {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 16
+      max_engineering: 47
+      low_limit: 18
+      high_limit: 37.4
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    temperature {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 150
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    level_alarm_delay: 2
+    is_pressurized: false
+  }
+  eal_header {
+    air_pressure {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 2.5
+      low_limit: 0.3
+      high_limit: 0.8
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    oil_level {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 8
+      max_engineering: 48.7
+      low_limit: 19
+      high_limit: 47
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    temperature {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 200
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    level_alarm_delay: 2
+    is_pressurized: false
+  }
+  low_air_pressure_difference_alarm_limit: 0
+  high_air_pressure_difference_alarm_limit: 0.4
+  flush_header_high_limit: 90
+  flush_header_low_limit: 50
+  pressure_alarm_delay: 2
+  _has_eal: true
+}
+drive_motor {
+  load {
+    feedback {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 2000
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    unit: Ampere
+    setup: ControlAndMonitoring
+  }
+  load_2 {
+    feedback {
+      min_raw: 0
+      max_raw: 0
+      min_engineering: 0
+      max_engineering: 0
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    unit: Ampere
+    setup: NotInstalled
+  }
+  rpm_command {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  rpm_feedback {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  winding_u_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 145
+    high_high_limit: 155
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  winding_v_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 145
+    high_high_limit: 155
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  winding_w_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 145
+    high_high_limit: 155
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  bearing_de_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  bearing_nde_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  torque {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  torque_limit {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  starter {
+    starter_type: Drive
+    start_pulse_length: 2
+    circuit_breaker_control: ManualButtons
+    _has_ethernet_interface: false
+    alarm {
+      installed: true
+      is_nc: true
+    }
+    failure {
+      installed: true
+      is_nc: true
+    }
+    is_auto_transformer: true
+    _has_active_front_end: false
+    _has_cooling_unit: false
+    continuous_interlock_signal: false
+    _has_heating_monitoring: false
+  }
+  autostop {
+    servo_stopped_delay: 0
+    pitch_feedback_failure: false
+    pitch_follow_up_failure: false
+    rpm_feedback_failure: false
+    rpm_follow_up_failure: false
+    servo_stopped_failure: false
+  }
+  rpm_follow_up_failure {
+    alarm_limit: 200
+    alarm_delay: 20
+    alarm_off_delay: 5
+    action: NoResponse
+  }
+  torque_percent {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  rpm_percent {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  load_percent {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: 0
+    max_engineering: 120
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  max_rpm_gain_lowered {
+    positive: 100
+    negative: -100
+  }
+  max_rpm_gain_retracted {
+    positive: 100
+    negative: -100
+  }
+  idle_rpm: 0
+  fixed_rpm: 1190
+  clutch_control: ClutchControlNotConfigured
+  _has_rpm_control: false
+  bipolar_rpm: false
+  winding_monitoring: WindingsNotMonitored
+  bearing_monitoring: MeasurementNotInstalled
+  auto_restart: false
+  motor_cooler_leakage_sensor {
+    installed: false
+    is_nc: false
+  }
+  is_diesel_engine: false
+}
+thruster_unit {
+  lubrication_oil_temperature {
+    min_raw: 4
+    max_raw: 20
+    min_engineering: -200
+    max_engineering: 850
+    low_limit: 0
+    high_limit: 65
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  gear_oil_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  pressure_s1 {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementAnalog
+    analog_signal_type: Milliampere
+  }
+  pressure_s2 {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  cooling_pump_lubrication_oil_start_delay: 0
+  _has_cooling_pump_lubrication_oil: true
+}
+rdt {
+  motor_inlet_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  motor_outlet_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  motor_inlet_pressure {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  motor_outlet_pressure {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  high_pressure_shut_down_circulation_pump: false
+}
+cms {
+  aqua_sensor_oil_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  oil_quality {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  oil_saturation {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+}
+thrust {
+  max_thrust_lowered {
+    positive: 110
+    negative: 110
+    correction_factor: 1
+  }
+  max_thrust_retracted {
+    positive: 131
+    negative: 131
+    correction_factor: 1.138
+  }
+  propeller_diameter: 1.75
+  gear_ratio_multiplier: 11
+  gear_ratio_divisor: 36
+  asymmetrical_propeller_blade: false
+}
+pitch {
+  valve {
+    deadband: 0.1
+    offset: 2.2
+    ramp: 4
+    max_speed: 10
+  }
+  control {
+    gain_lowered {
+      reference_fixed_rpm {
+        max_positive: 22.85
+        max_negative: -22.85
+      }
+      reference_combinator {
+        max_positive: 22.85
+        max_negative: -22.85
+      }
+      setting_1 {
+        max_positive: 22.88
+        max_negative: -22.88
+      }
+      setting_2 {
+        max_positive: 1
+        max_negative: -1
+      }
+    }
+    gain_retracted {
+      reference_fixed_rpm {
+        max_positive: 19.78
+        max_negative: -19.78
+      }
+      reference_combinator {
+        max_positive: 22.85
+        max_negative: -22.85
+      }
+      setting_1 {
+        max_positive: 22.59
+        max_negative: -22.59
+      }
+      setting_2 {
+        max_positive: 19.78
+        max_negative: -19.78
+      }
+    }
+    generator_frequency {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 45
+      max_engineering: 65
+      low_limit: 50
+      high_limit: 60
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+    follow_up_failure_delay: 1
+    follow_up_failure_alarm_limit: 2
+    zero_thrust_angle: 0
+    _has_two_gain_settings: true
+    gain_setting_2: LinearWithDelta
+    compensate_drifting_in_transit: false
+  }
+  feedback {
+    deviation_alarm_limit: 1
+    selector: FeedbackSelectorBestEffort
+  }
+}
+load_control {
+  thrust_reduction_limit_negative: -60
+  thrust_reduction_limit_positive: 60
+  max_load: 1340
+  max_overload: 0
+  max_load_reduced_mode: 0
+  overload_alarm: OverloadAlarmNotInUse
+  overload_alarm_delay: 10
+  reduction_alternative: ThrustLimitation
+  _has_reduced_mode: false
+}
+interface {
+  dp {
+    thrust {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    azimuth {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    type: Disabled
+    controller_source: ControllerSourceA1
+    serial_interface {
+      port: 0
+    }
+    deadband_thrust: 3.9
+    deadband_thrust_zero_command: 1
+    deadband_azimuth: 5
+  }
+  joystick {
+    thrust {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    azimuth {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    type: Disabled
+    controller_source: ControllerSourceA1
+    serial_interface {
+      port: 0
+    }
+    deadband_thrust: 0
+    deadband_thrust_zero_command: 0.5
+    deadband_azimuth: 0
+  }
+  autopilot {
+    thrust {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    azimuth {
+      min_raw: 4
+      mid_raw: 12
+      max_raw: 20
+    }
+    type: Disabled
+    controller_source: ControllerSourceA1
+    serial_interface {
+      port: 0
+    }
+    deadband_thrust: 0
+    deadband_thrust_zero_command: 0.5
+    deadband_azimuth: 0
+  }
+  bridge {
+    thrust {
+      min_raw: 0
+      mid_raw: 0
+      max_raw: 0
+    }
+    azimuth {
+      min_raw: 0
+      mid_raw: 0
+      max_raw: 0
+    }
+    type: Disabled
+    controller_source: ControllerSourceA1
+    serial_interface {
+      port: 0
+    }
+    deadband_thrust: 0
+    deadband_thrust_zero_command: 0.5
+    deadband_azimuth: 0
+  }
+  ship_speed {
+    ship_speed {
+      min_raw: 0
+      max_raw: 0
+      min_engineering: 0
+      max_engineering: 0
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    serial_interface {
+      port: 1
+    }
+    nmea_telegram: VTG
+    signal_type: NMEA
+    controller_source: ControllerSourceA1
+    nmea_enabled: true
+    nmea_time_enabled: true
+  }
+  ias {
+    type: Nmea
+    serial_interface {
+      port: 0
+    }
+    controller_source: ControllerSourceA1
+  }
+  conning {
+    serial_interface {
+      port: 3
+    }
+    controller_source: ControllerSourceA1
+    enabled: true
+  }
+  vdr {
+    serial_interface {
+      port: 2
+    }
+    controller_source: ControllerSourceA1
+    enabled: true
+  }
+  pms {
+    power_available {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 850
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementAnalogAndDigital
+      analog_signal_type: Milliampere
+    }
+    use_override: false
+    inhibit_start_analog: false
+  }
+}
+azimuth {
+  valve {
+    deadband: 0.3
+    offset: 2.2
+    ramp: 15
+    max_speed: 5
+  }
+  feedback {
+    deviation_alarm_limit: 5
+    feedback_2_offset: 0
+    selector: FeedbackSelectorBestEffort
+  }
+  limitation {
+    forbidden_zone {
+      zone1 {
+        min_angle: 55
+        max_angle: 60
+        limit: 50
+        enabled: false
+      }
+      zone2 {
+        min_angle: 60
+        max_angle: 70
+        limit: 40
+        enabled: false
+      }
+      limit_type: Thrust
+      use_override: true
+    }
+    ship_speed {
+      disable_limit_in_dp: false
+    }
+  }
+  control {
+    type: Hydraulic
+    number_of_drives: 2
+    motor_temperature_sensor: MeasurementNotInstalled
+  }
+}
+azimuth_unit {
+  gear_oil_temperature {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 35
+    high_limit: 50
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  rotation_brake_on_delay: 60
+  in_pos: 0
+  duct_type: DuctTypeN38
+  _has_cooling_pump_gear: false
+}
+alarm {
+  pulse_length: 2
+  _has_power_failure_bridge: false
+  _has_power_failure_thruster_room: true
+  _has_earth_fault: false
+  _has_thermo_fuse_main_bridge: false
+}
+fan {
+  start_stop_type: CommandSignalPulse
+  installed: true
+}
+mode {
+  low_gain_setting: 100
+  power_mode_load_limit: 0
+  _has_power_mode: false
+}
+emergency_stop {
+  thruster_room {
+    installed: false
+    is_nc: false
+  }
+  bridge {
+    installed: true
+    is_nc: false
+  }
+}
+cjc_filter {
+  alarm_delay: 1
+  circ_filter_pump_delay: 900
+  circ_filter_mode: DriveMotorStart
+  installed: false
+  _has_alarm: false
+}
+angle_gear {
+  tank {
+    air_pressure {
+      min_raw: 0
+      max_raw: 0
+      min_engineering: 0
+      max_engineering: 0
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    oil_level {
+      min_raw: 0
+      max_raw: 0
+      min_engineering: 0
+      max_engineering: 0
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    temperature {
+      min_raw: 0
+      max_raw: 0
+      min_engineering: 0
+      max_engineering: 0
+      low_limit: 0
+      high_limit: 0
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
+      analog_signal_type: Milliampere
+    }
+    level_alarm_delay: 0
+    is_pressurized: false
+  }
+  nozzle_pressure {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  lubrication_pump_pressure {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  mechanical_pump_pressure {
+    min_raw: 0
+    max_raw: 0
+    min_engineering: 0
+    max_engineering: 0
+    low_limit: 0
+    high_limit: 0
+    high_high_limit: 0
+    measurement_type: MeasurementNotInstalled
+    analog_signal_type: Milliampere
+  }
+  low_level_alarm_delay: 0
+  high_level_alarm_delay: 0
+  fill_delay: 0
+  low_air_pressure_difference_alarm_limit: 0
+  high_air_pressure_difference_alarm_limit: 0
+  low_level_drain: 0
+  fill_level: 0
+  high_level_drain: 0
+  high_level_operation_alarm_limit: 0
+  start_pump_rpm_limit: 0
+  start_pump_temperature_limit: 0
+  stop_pump_temperature_limit: 0
+  start_pump_pressure_limit: 0
+  stop_pump_pressure_limit: 0
+  gear_ratio_multiplier: 1
+  gear_ratio_divisor: 1
+  lubrication_pump_uses_rpm_control: false
+  lubrication_pump_uses_temperature_control: false
+}
