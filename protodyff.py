@@ -1,6 +1,7 @@
 
 import json, difflib, sys, re
 import google.protobuf.text_format as text_format
+from google.protobuf.text_format import ParseError as textError
 from google.protobuf.json_format import MessageToDict, ParseError
 from deepdiff import DeepDiff
 from typing import Callable
@@ -23,26 +24,25 @@ def parse_file(file, version):
             import proto5.thruster5 as proto5
             with open(file, 'r') as f:
                 return text_format.Parse(f.read(), proto5.ThrusterParameters())
-        except Exception:
+        except textError:
             print(f"File {RED(file)} is invalid", file=sys.stderr)
-            sys.exit(0)
+
 
     elif version == 1.6:
         try:
             import proto6.thruster6 as proto6
             with open(file, 'r') as f:
                 return text_format.Parse(f.read(), proto6.ThrusterParameters())
-        except Exception:
+        except textError:
             print(f"File {RED(file)} is invalid", file=sys.stderr)
-            sys.exit(0)
 
-    #Gives an error invalid if the version is not in this
-    print(Fore.RED + "+"*15+"\nInvalid version\n"+"+"*15, Fore.WHITE)
+    else:
+        #Gives an error invalid if the version is not in this
+        print(Fore.RED + "+"*15+"\nInvalid version\n"+"+"*15, Fore.WHITE)
     sys.exit(0)
 
 
 def output_format(string, version):
-    print
     if args.version == 1.5:
         #Regex to make everything CamelCase
         return ''.join(x.capitalize() if i > 0 else x for i, x in enumerate(re.split(r'[^a-zA-Z0-9]', string))) 
@@ -111,28 +111,33 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
 
     for line in lines:
         line = line.rstrip()
+
         if line.startswith("+"):
+            
             parts = line.split(':', 1)
-            key = parts[0].split()[-1].strip('"')  # Extracting subkey without quotes
+            key = parts[0].split()[-1].strip('"')  # Input has "" strips and forces to string
+
             if line.startswith("+"):
                 breadcrumb = find_key_breadcrumb(key, new_dict)
                 if breadcrumb:
                     result += Fore.GREEN + "+ " + breadcrumb + ": " + parts[1].strip() + Fore.RESET + "\n"
+
         elif line.startswith("-"):
             parts = line.split(':', 1)
-            key = parts[0].split()[-1].strip('"')  # Extracting subkey without quotes
+            key = parts[0].split()[-1].strip('"')  # Input has "" strips and forces to string
+
             if line.startswith("-"):
                 breadcrumb = find_key_breadcrumb(key, old_dict)
                 if breadcrumb:
                     result += Fore.RED + "- " + breadcrumb + ": " + parts[1].strip() + Fore.RESET + "\n"
+
         elif line.startswith("?"):
             continue
 
     if short:
         add = result.count("+")
         remove = result.count("-")
-        print(Fore.GREEN + '\nAdded: ' + Fore.GREEN + str(add) +
-      "     " + Fore.RED + "Removed: " + Fore.RED + str(remove), Fore.WHITE)
+        print(Fore.GREEN + '\nAdded: ' + Fore.GREEN + str(add) +"     " + Fore.RED + "Removed: " + Fore.RED + str(remove), Fore.WHITE)
 
         return ""
 
@@ -141,7 +146,7 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
 
 
 if __name__ == "__main__":
-    try:
+
         parser = ArgumentParser(
             description=f"A tool to find differences in brunvoll protobuf files")
 
@@ -150,19 +155,18 @@ if __name__ == "__main__":
         parser.add_argument("file2", help="Path to the second file")
 
         parser.add_argument(
-            "-v", "--version", help="Selects the protobuf 5 version", type=float)
+            "-v", "--version", help="Input which version you want, ex -v 1.5 to select the protobuf v1.5", type=float)
         parser.add_argument(
             "-s", "--short", help=f"displays a short format with adds and removes ex: {Fore.GREEN + f'Added: 3' + '      ' + Fore.RED + f'Removed: 4'}" + Fore.WHITE, action="store_true")
         
 
-        if len(sys.argv) == 1:
-            print("\n")
+        if len(sys.argv) == 1: # prints the help screen if no arguments are passed
             parser.print_help()
             print("")
             sys.exit(0)
 
 
-        args: Namespace = parser.parse_args()
+        args: Namespace = parser.parse_args() #the arguments
 
         parsed1 = MessageToDict(
             parse_file(
@@ -177,5 +181,3 @@ if __name__ == "__main__":
                 parsed2,
                 True if args.short else False
             ))
-    except Exception as e:
-        print(e, file=sys.stderr)
