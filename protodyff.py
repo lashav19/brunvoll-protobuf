@@ -1,25 +1,30 @@
 
+import json, difflib, sys, re
 import google.protobuf.text_format as text_format
 from google.protobuf.json_format import MessageToDict, ParseError
-import json
-import difflib
 from deepdiff import DeepDiff
 from typing import Callable
 from argparse import ArgumentParser, Namespace
 from colorama import Fore
-import sys
-import re
+
+
 RED: Callable[[str], str] = lambda text: f"\u001b[31m{text}\033\u001b[0m"
 GREEN: Callable[[str], str] = lambda text: f"\u001b[32m{text}\033\u001b[0m"
 
 def parse_file(file, version):
+    if not version:
+        print(Fore.RED + "Error:", end=" ")
+        print("No version specified\n", Fore.WHITE)
+        parser.print_help()
+        sys.exit(0)
+
     if version == 1.5:
         try:
             import proto5.thruster5 as proto5
             with open(file, 'r') as f:
                 return text_format.Parse(f.read(), proto5.ThrusterParameters())
         except Exception:
-            print(f"Filen {RED(file)} er ugyldig", file=sys.stderr)
+            print(f"File {RED(file)} is invalid", file=sys.stderr)
             sys.exit(0)
 
     elif version == 1.6:
@@ -28,40 +33,42 @@ def parse_file(file, version):
             with open(file, 'r') as f:
                 return text_format.Parse(f.read(), proto6.ThrusterParameters())
         except Exception:
-            print(f"Filen {RED(file)} er ugyldig", file=sys.stderr)
+            print(f"File {RED(file)} is invalid", file=sys.stderr)
             sys.exit(0)
+
+    #Gives an error invalid if the version is not in this
+    print(Fore.RED + "+"*15+"\nInvalid version\n"+"+"*15, Fore.WHITE)
+    sys.exit(0)
+
 
 def output_format(string, version):
     print
     if args.version == 1.5:
-        # Convert to CamelCase with specific rules
-        return ''.join(x.capitalize() if i > 0 else x for i, x in enumerate(re.split(r'[^a-zA-Z0-9]', string)))
+        #Regex to make everything CamelCase
+        return ''.join(x.capitalize() if i > 0 else x for i, x in enumerate(re.split(r'[^a-zA-Z0-9]', string))) 
+    
     elif args.version == 1.6:
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower()
+        #Regex to make snake_case
+        return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower() 
 
 def find_key_breadcrumb(subkey: str, dictionary: dict, parent_key='', sep='.', version=1.5):
     # Create breadcrumb for the key in the dictionary
     for key, value in dictionary.items():
         if isinstance(value, dict):
-            if version == 1.6:
-                if parent_key:
-                    breadcrumb = find_key_breadcrumb(subkey, value, output_format(parent_key, version) + sep + output_format(key, version), sep=sep, version=version)
-                else:
-                    breadcrumb = find_key_breadcrumb(subkey, value, output_format(key, version), sep=sep, version=version)
+
+            if parent_key:
+                breadcrumb = find_key_breadcrumb(subkey, value, output_format(parent_key, version) + sep + output_format(key, version), sep=sep, version=version)
             else:
-                if parent_key:
-                    breadcrumb = find_key_breadcrumb(subkey, value, parent_key + sep + output_format(key, version), sep=sep, version=version)
-                else:
-                    breadcrumb = find_key_breadcrumb(subkey, value, output_format(key, version), sep=sep, version=version)
+                breadcrumb = find_key_breadcrumb(subkey, value, output_format(key, version), sep=sep, version=version)
+
             if breadcrumb:
                 return breadcrumb
+
         elif key == subkey:
             if parent_key:
                 return parent_key + sep + output_format(key, version)
             else:
                 return output_format(key, version)
-
-
 
 
 def get_diff_lines(old_dict: dict, new_dict: dict) -> str:
@@ -86,7 +93,7 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
             elif subkey != key:  # If subkey changes, we stop looking
                 break
 
-        if subkey:  # If subkey is found
+        if subkey:  # Breaks if subkey is found
             break
 
     if subkey:
@@ -157,21 +164,18 @@ if __name__ == "__main__":
 
         args: Namespace = parser.parse_args()
 
-        parsed1 = MessageToDict(parse_file(
-            str(args.file1), args.version))
+        parsed1 = MessageToDict(
+            parse_file(
+                str(args.file1), args.version))
 
-        parsed2 = MessageToDict(parse_file(
-            str(args.file2), args.version))
+        parsed2 = MessageToDict(
+            parse_file(
+                str(args.file2), args.version))
         print(
             get_edits_string(
                 parsed1,
                 parsed2,
                 True if args.short else False
-            ).lower() if args.version == 1.6 else get_edits_string(
-                parsed1,
-                parsed2,
-                True if args.short else False
-            )
-        )
+            ))
     except Exception as e:
         print(e, file=sys.stderr)
