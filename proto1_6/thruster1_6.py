@@ -3,8 +3,8 @@
 # source: thruster_parameters.proto
 # Protobuf Python Version: 4.25.2
 """Generated protocol buffer code."""
-import proto6.common_pb2 as common__pb2
-import proto6.field_options_pb2 as field__options__pb2
+import proto1_6.common_pb2 as common__pb2
+import proto1_6.field_options_pb2 as field__options__pb2
 from google.protobuf import descriptor as _descriptor
 from google.protobuf import descriptor_pool as _descriptor_pool
 from google.protobuf import symbol_database as _symbol_database

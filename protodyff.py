@@ -9,103 +9,123 @@ from argparse import ArgumentParser, Namespace
 from colorama import Fore
 
 
+
 RED: Callable[[str], str] = lambda text: f"\u001b[31m{text}\033\u001b[0m"
 GREEN: Callable[[str], str] = lambda text: f"\u001b[32m{text}\033\u001b[0m"
 
 def parse_file(file, version):
     if not version:
         print(Fore.RED + "Error:", end=" ")
-        print("No version specified\n", Fore.WHITE)
+        print("No version specified\n", Fore.RESET)
         parser.print_help()
         sys.exit(0)
+    try:
+        if version == 1.5:
+            from proto1_5 import thruster1_5 as protobuf 
+        elif version == 1.6:
+            from proto1_6 import thruster1_6 as protobuf
+    
+        with open(file, 'r') as f:
+            return text_format.Parse(f.read(), protobuf.ThrusterParameters())        
+    except textError:
+        print(f"File {RED(file)} is invalid, inncorrect syntax or invalid version", file=sys.stderr)
+    except FileNotFoundError:
+        print(f"File {RED(file)} not found", file=sys.stderr)
 
-    if version == 1.5:
-        try:
-            import proto5.thruster5 as proto5
-            with open(file, 'r') as f:
-                return text_format.Parse(f.read(), proto5.ThrusterParameters())
-        except textError:
-            print(f"File {RED(file)} is invalid", file=sys.stderr)
-
-
-    elif version == 1.6:
-        try:
-            import proto6.thruster6 as proto6
-            with open(file, 'r') as f:
-                return text_format.Parse(f.read(), proto6.ThrusterParameters())
-        except textError:
-            print(f"File {RED(file)} is invalid", file=sys.stderr)
-
-    else:
-        #Gives an error invalid if the version is not in this
-        print(Fore.RED + "+"*15+"\nInvalid version\n"+"+"*15, Fore.WHITE)
     sys.exit(0)
 
 
-def output_format(string, version):
+def output_format(string):
+    """
+    Matches the keywords with the keyword standard in version 1.5 and 1.6
+    1.5: everything is CamelCase
+    1.6: everything is snake_case
+    """
     if args.version == 1.5:
-        #Regex to make everything CamelCase
-        return ''.join(x.capitalize() if i > 0 else x for i, x in enumerate(re.split(r'[^a-zA-Z0-9]', string))) 
+        # Regex to make everything CamelCase
+        formatted_string = ''.join(x.capitalize() if i > 0 else x for i, x in enumerate(re.split(r'[^a-zA-Z0-9]', string))) 
     
     elif args.version == 1.6:
-        #Regex to make snake_case
-        return re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower() 
+        # Regex to make snake_case
+        formatted_string = re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower() 
 
-def find_key_breadcrumb(subkey: str, dictionary: dict, parent_key='', sep='.', version=1.5):
+    # Regex to remove values without a comma at the end
+    formatted_string = re.sub(r'([^,\n]+)(?=\n\1$)', '', formatted_string)
+
+
+    return formatted_string
+
+
+def find_key_breadcrumb(subkey: str, dictionary: dict, parent_key='', sep='.'):
+    """
+    Recursive function to create a breadcrumb path for the specified subkey in the dictionary.
+    """
     # Create breadcrumb for the key in the dictionary
     for key, value in dictionary.items():
         if isinstance(value, dict):
-
             if parent_key:
-                breadcrumb = find_key_breadcrumb(subkey, value, output_format(parent_key, version) + sep + output_format(key, version), sep=sep, version=version)
+                breadcrumb = find_key_breadcrumb(subkey, value, output_format(parent_key) + sep + output_format(key), sep=sep)
             else:
-                breadcrumb = find_key_breadcrumb(subkey, value, output_format(key, version), sep=sep, version=version)
+                breadcrumb = find_key_breadcrumb(subkey, value, output_format(key), sep=sep)
 
             if breadcrumb:
                 return breadcrumb
-
         elif key == subkey:
             if parent_key:
-                return parent_key + sep + output_format(key, version)
+                breadcrumb = parent_key + sep + output_format(key)
             else:
-                return output_format(key, version)
+                breadcrumb = output_format(key)
+
+            # Remove values without a comma at the end
+
+            return breadcrumb
+
+
+def validate(lines:str):
+    modified_lines = ""
+    for line in lines:
+        if "{" in line or "}" in line or "," in line:
+            modified_lines += line.replace(",","")
+        else:
+            modified_lines += line
+    return modified_lines
 
 
 def get_diff_lines(old_dict: dict, new_dict: dict) -> str:
+    # abstraction for difflib to return the json dumps for the two files
+    json1 = json.dumps(old_dict, indent=1).splitlines(keepends=True)
+    json2 = json.dumps(new_dict, indent=1).splitlines(keepends=True)
+
+
     lines = difflib.ndiff(
-        json.dumps(old_dict, indent=4).splitlines(keepends=True),
-        json.dumps(new_dict, indent=4).splitlines(keepends=True)
+        json.dumps(old_dict, indent=1).splitlines(keepends=True),
+        json.dumps(new_dict, indent=1).splitlines(keepends=True)
     )
-    return lines
+
+
+
+    # Split the string into lines and iterate over them
+
+    return lines    
 
 
 def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str:
     result = ""
     subkey = None
     lines = get_diff_lines(old_dict, new_dict)
+
     for line in lines:
         line = line.rstrip()
-        if line.startswith("+"):
-            parts = line.split(':', 1)
-            key = parts[0].split()[-1].strip('"')  # Extracting subkey without quotes
-            if subkey is None:  # If subkey is not yet set
-                subkey = key
-            elif subkey != key:  # If subkey changes, we stop looking
-                break
-
-        if subkey:  # Breaks if subkey is found
-            break
-
     if subkey:
         subkey_breadcrumb = find_key_breadcrumb(subkey, new_dict)
         if subkey_breadcrumb:
             print("")
         else:
-            print("Subkey '{}' not found in the dictionary.".format(subkey))
-            return ""
+            print(subkey)
+
     else:
-        print("No subkey found in the diff.")
-        return ""
+        print()
+  
 
     lines = get_diff_lines(old_dict, new_dict)
 
@@ -113,52 +133,66 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
         line = line.rstrip()
 
         if line.startswith("+"):
-            
+            if args.long:
+                print(Fore.GREEN + line)
+                continue
             parts = line.split(':', 1)
             key = parts[0].split()[-1].strip('"')  # Input has "" strips and forces to string
 
-            if line.startswith("+"):
-                breadcrumb = find_key_breadcrumb(key, new_dict)
-                if breadcrumb:
-                    result += Fore.GREEN + "+ " + breadcrumb + ": " + parts[1].strip() + Fore.RESET + "\n"
+            breadcrumb = find_key_breadcrumb(key, new_dict)
+            if breadcrumb:
+                colorString = Fore.GREEN + "+ " + breadcrumb + ": " + parts[1].strip() + Fore.RESET + "\n"
+                result += colorString
+   
 
         elif line.startswith("-"):
+            if args.long:
+                print(Fore.RED + line) 
+                continue
+
             parts = line.split(':', 1)
             key = parts[0].split()[-1].strip('"')  # Input has "" strips and forces to string
 
-            if line.startswith("-"):
-                breadcrumb = find_key_breadcrumb(key, old_dict)
-                if breadcrumb:
-                    result += Fore.RED + "- " + breadcrumb + ": " + parts[1].strip() + Fore.RESET + "\n"
+            breadcrumb = find_key_breadcrumb(key, old_dict)
+            if breadcrumb:
+                colorString = Fore.RED + "- " + breadcrumb.rstrip() + ": " + parts[1].strip() + Fore.RESET + "\n"
+                result += colorString
 
         elif line.startswith("?"):
-            continue
+            if args.long:
+                print(Fore.YELLOW + line)
+                continue
+        else:
+            print(Fore.RESET+line) if args.long else None
 
     if short:
         add = result.count("+")
         remove = result.count("-")
-        print(Fore.GREEN + '\nAdded: ' + Fore.GREEN + str(add) +"     " + Fore.RED + "Removed: " + Fore.RED + str(remove), Fore.WHITE)
+        print(Fore.GREEN + '\nAdded: ' + Fore.GREEN + str(add) +"     " + Fore.RED + "Removed/Changed: " + Fore.RED + str(remove), Fore.RESET)
 
-        return ""
-
+        sys.exit(0)
+    lines = result.split('\n')
+    # Remove any leading or trailing whitespace from each line and store them in a set
     return result
-
 
 
 if __name__ == "__main__":
 
         parser = ArgumentParser(
-            description=f"A tool to find differences in brunvoll protobuf files")
+            description=f"A tool to find differences in brunvoll protobuf files This is a test version {Fore.RED + 'NOT FOR PRODUCTION' + Fore.RESET}", prefix_chars="-+/")
 
         # Example usage
         parser.add_argument("file1", help="Path to the first file")
         parser.add_argument("file2", help="Path to the second file")
 
         parser.add_argument(
-            "-v", "--version", help="Input which version you want, ex -v 1.5 to select the protobuf v1.5", type=float)
+            "-v", "--version", choices=[1.5, 1.6], type=float, required=True)
         parser.add_argument(
             "-s", "--short", help=f"displays a short format with adds and removes ex: {Fore.GREEN + f'Added: 3' + '      ' + Fore.RED + f'Removed: 4'}" + Fore.WHITE, action="store_true")
+        parser.add_argument(
+            "-l", "--long", help="displays the whole file and the changes in it", action="store_true")
         
+
 
         if len(sys.argv) == 1: # prints the help screen if no arguments are passed
             parser.print_help()
@@ -167,7 +201,6 @@ if __name__ == "__main__":
 
 
         args: Namespace = parser.parse_args() #the arguments
-
         parsed1 = MessageToDict(
             parse_file(
                 str(args.file1), args.version))
@@ -175,9 +208,9 @@ if __name__ == "__main__":
         parsed2 = MessageToDict(
             parse_file(
                 str(args.file2), args.version))
-        print(
-            get_edits_string(
+        returns = str(get_edits_string(
                 parsed1,
                 parsed2,
                 True if args.short else False
             ))
+        print(returns)

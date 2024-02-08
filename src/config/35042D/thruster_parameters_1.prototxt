@@ -1,10 +1,10 @@
 thruster_name: "Bow"
 thruster_type: FU63
-plant_number: "12391"
+plant_number: "12293"
 position {
-  x_position: 0
+  x_position: 1
   y_position: 0
-  z_position: 3
+  z_position: 0
 }
 _has_controllable_pitch: true
 is_combi_thruster: false
@@ -16,6 +16,19 @@ start_sequence_timeout_length: 180
 stop_sequence_timeout_length: 30
 local_control_selector: LocalControlSelectorGuiButton
 hpu {
+  servo_pump_1 {
+    pressure {
+      min_raw: 5
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 100
+      low_limit: 8
+      high_limit: 45
+      high_high_limit: 0
+      measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+  }
   servo_pump_2 {
     pressure {
       min_raw: 4
@@ -24,21 +37,8 @@ hpu {
       max_engineering: 100
       low_limit: 18
       high_limit: 165
-      high_high_limit: 2
-      measurement_type: MeasurementNotInstalled
-      analog_signal_type: Milliampere
-    }
-  }
-  servo_pump_1 {
-    pressure {
-      min_raw: 4
-      max_raw: 20
-      min_engineering: 0
-      max_engineering: 100
-      low_limit: 8
-      high_limit: 45
       high_high_limit: 0
-      measurement_type: MeasurementAnalog
+      measurement_type: MeasurementNotInstalled
       analog_signal_type: Milliampere
     }
   }
@@ -176,8 +176,8 @@ tank_system {
     oil_level {
       min_raw: 4
       max_raw: 20
-      min_engineering: 11
-      max_engineering: 40.1
+      min_engineering: 16
+      max_engineering: 47
       low_limit: 18
       high_limit: 37.4
       high_high_limit: 0
@@ -213,7 +213,7 @@ tank_system {
     oil_level {
       min_raw: 4
       max_raw: 20
-      min_engineering: 8.7
+      min_engineering: 8
       max_engineering: 48.7
       low_limit: 19
       high_limit: 47
@@ -385,7 +385,7 @@ drive_motor {
       installed: true
       is_nc: true
     }
-    is_auto_transformer: false
+    is_auto_transformer: true
     _has_active_front_end: false
     _has_cooling_unit: false
     continuous_interlock_signal: false
@@ -491,7 +491,7 @@ thruster_unit {
     low_limit: 0
     high_limit: 0
     high_high_limit: 0
-    measurement_type: MeasurementNotInstalled
+    measurement_type: MeasurementAnalog
     analog_signal_type: Milliampere
   }
   pressure_s2 {
@@ -599,7 +599,7 @@ thrust {
   max_thrust_retracted {
     positive: 131
     negative: 131
-    correction_factor: 1.14
+    correction_factor: 1.138
   }
   propeller_diameter: 1.75
   gear_ratio_multiplier: 11
@@ -674,14 +674,14 @@ pitch {
   }
 }
 load_control {
-  thrust_reduction_limit_negative: -100
-  thrust_reduction_limit_positive: 100
+  thrust_reduction_limit_negative: -60
+  thrust_reduction_limit_positive: 60
   max_load: 1340
   max_overload: 0
   max_load_reduced_mode: 0
   overload_alarm: OverloadAlarmNotInUse
   overload_alarm_delay: 10
-  reduction_alternative: ReductionNotInUse
+  reduction_alternative: ThrustLimitation
   _has_reduced_mode: false
 }
 interface {
@@ -882,7 +882,7 @@ azimuth_unit {
 alarm {
   pulse_length: 2
   _has_power_failure_bridge: false
-  _has_power_failure_thruster_room: false
+  _has_power_failure_thruster_room: true
   _has_earth_fault: false
   _has_thermo_fuse_main_bridge: false
 }
@@ -902,7 +902,7 @@ emergency_stop {
   }
   bridge {
     installed: true
-    is_nc: true
+    is_nc: false
   }
 }
 cjc_filter {

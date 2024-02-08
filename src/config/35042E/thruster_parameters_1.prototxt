@@ -4,7 +4,7 @@ plant_number: "12391"
 position {
   x_position: 0
   y_position: 0
-  z_position: 3
+  z_position: 0
 }
 _has_controllable_pitch: true
 is_combi_thruster: false
@@ -16,19 +16,6 @@ start_sequence_timeout_length: 180
 stop_sequence_timeout_length: 30
 local_control_selector: LocalControlSelectorGuiButton
 hpu {
-  servo_pump_2 {
-    pressure {
-      min_raw: 4
-      max_raw: 20
-      min_engineering: 0
-      max_engineering: 100
-      low_limit: 18
-      high_limit: 165
-      high_high_limit: 2
-      measurement_type: MeasurementNotInstalled
-      analog_signal_type: Milliampere
-    }
-  }
   servo_pump_1 {
     pressure {
       min_raw: 4
@@ -39,6 +26,19 @@ hpu {
       high_limit: 45
       high_high_limit: 0
       measurement_type: MeasurementAnalog
+      analog_signal_type: Milliampere
+    }
+  }
+  servo_pump_2 {
+    pressure {
+      min_raw: 4
+      max_raw: 20
+      min_engineering: 0
+      max_engineering: 100
+      low_limit: 18
+      high_limit: 165
+      high_high_limit: 0
+      measurement_type: MeasurementNotInstalled
       analog_signal_type: Milliampere
     }
   }
