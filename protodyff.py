@@ -26,9 +26,11 @@ def parse_file(file, version):
             from proto1_6 import thruster1_6 as protobuf
     
         with open(file, 'r') as f:
-            return text_format.Parse(f.read(), protobuf.ThrusterParameters())        
+            return text_format.Parse(f.read(), protobuf.ThrusterParameters()) 
+       
     except textError:
         print(f"File {RED(file)} is invalid, inncorrect syntax or invalid version", file=sys.stderr)
+        
     except FileNotFoundError:
         print(f"File {RED(file)} not found", file=sys.stderr)
 
@@ -48,6 +50,8 @@ def output_format(string):
     elif args.version == 1.6:
         # Regex to make snake_case
         formatted_string = re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower() 
+    else:
+        return ""
 
     return formatted_string
 
@@ -105,16 +109,16 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
     lines = get_diff_lines(old_dict, new_dict)
 
     for line in lines:
-        line = line.rstrip()
+        line = line.rstrip() #removes whitespace
     if subkey:
         subkey_breadcrumb = find_key_breadcrumb(subkey, new_dict)
         if subkey_breadcrumb:
-            print("")
+            print()
         else:
             print(subkey)
 
     else:
-        print()
+        None
   
 
     lines = get_diff_lines(old_dict, new_dict)
@@ -198,9 +202,10 @@ if __name__ == "__main__":
     parsed2 = MessageToDict(
         parse_file(
             str(args.file2), args.version)  )
-    returns = str(get_edits_string(
+    changes = str(get_edits_string(
             parsed1,
             parsed2,
             True if args.short else False
         ))
-    print(returns)
+
+    print("\n"+changes) if changes else print(Fore.GREEN + "No changes found", Fore.RESET)
