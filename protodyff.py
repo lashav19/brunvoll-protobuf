@@ -2,7 +2,7 @@
 import json, difflib, sys, re
 import google.protobuf.text_format as text_format
 from google.protobuf.text_format import ParseError as textError
-from google.protobuf.json_format import MessageToDict, ParseError
+from google.protobuf.json_format import MessageToDict, ParseError, MessageToJson
 from deepdiff import DeepDiff
 from typing import Callable
 from argparse import ArgumentParser, Namespace
@@ -49,10 +49,6 @@ def output_format(string):
         # Regex to make snake_case
         formatted_string = re.sub(r'(?<!^)(?=[A-Z])', '_', string).lower() 
 
-    # Regex to remove values without a comma at the end
-    formatted_string = re.sub(r'([^,\n]+)(?=\n\1$)', '', formatted_string)
-
-
     return formatted_string
 
 
@@ -76,16 +72,15 @@ def find_key_breadcrumb(subkey: str, dictionary: dict, parent_key='', sep='.'):
             else:
                 breadcrumb = output_format(key)
 
-            # Remove values without a comma at the end
-
             return breadcrumb
 
 
 def validate(lines:str):
     modified_lines = ""
+
     for line in lines:
-        if "{" in line or "}" in line or "," in line:
-            modified_lines += line.replace(",","")
+        if "{" in line or "}" in line or "," in line: #checks if comma is present
+            modified_lines += line.replace(",","") # replaces comma with no character
         else:
             modified_lines += line
     return modified_lines
@@ -96,15 +91,10 @@ def get_diff_lines(old_dict: dict, new_dict: dict) -> str:
     json1 = json.dumps(old_dict, indent=1).splitlines(keepends=True)
     json2 = json.dumps(new_dict, indent=1).splitlines(keepends=True)
 
-
     lines = difflib.ndiff(
-        json.dumps(old_dict, indent=1).splitlines(keepends=True),
-        json.dumps(new_dict, indent=1).splitlines(keepends=True)
+        validate(json1).splitlines(),
+        validate(json2).splitlines()
     )
-
-
-
-    # Split the string into lines and iterate over them
 
     return lines    
 
@@ -178,39 +168,39 @@ def get_edits_string(old_dict: dict, new_dict: dict, short: bool = False) -> str
 
 if __name__ == "__main__":
 
-        parser = ArgumentParser(
-            description=f"A tool to find differences in brunvoll protobuf files This is a test version {Fore.RED + 'NOT FOR PRODUCTION' + Fore.RESET}", prefix_chars="-+/")
+    parser = ArgumentParser(
+        description=f"A tool to find differences in brunvoll protobuf files This is a test version {Fore.RED + 'NOT FOR PRODUCTION' + Fore.RESET}", prefix_chars="-+/")
 
-        # Example usage
-        parser.add_argument("file1", help="Path to the first file")
-        parser.add_argument("file2", help="Path to the second file")
+    # Example usage
+    parser.add_argument("file1", help="Path to the first file")
+    parser.add_argument("file2", help="Path to the second file")
 
-        parser.add_argument(
-            "-v", "--version", choices=[1.5, 1.6], type=float, required=True)
-        parser.add_argument(
-            "-s", "--short", help=f"displays a short format with adds and removes ex: {Fore.GREEN + f'Added: 3' + '      ' + Fore.RED + f'Removed: 4'}" + Fore.WHITE, action="store_true")
-        parser.add_argument(
-            "-l", "--long", help="displays the whole file and the changes in it", action="store_true")
-        
-
-
-        if len(sys.argv) == 1: # prints the help screen if no arguments are passed
-            parser.print_help()
-            print("")
-            sys.exit(0)
+    parser.add_argument(
+        "-v", "--version", choices=[1.5, 1.6], type=float, required=True)
+    parser.add_argument(
+        "-s", "--short", help=f"displays a short format with adds and removes ex: {Fore.GREEN + f'Added: 3' + '      ' + Fore.RED + f'Removed: 4'}" + Fore.WHITE, action="store_true")
+    parser.add_argument(
+        "-l", "--long", help="displays the whole file and the changes in it", action="store_true")
+    
 
 
-        args: Namespace = parser.parse_args() #the arguments
-        parsed1 = MessageToDict(
-            parse_file(
-                str(args.file1), args.version))
+    if len(sys.argv) == 1: # prints the help screen if no arguments are passed
+        parser.print_help()
+        print("")
+        sys.exit(0)
 
-        parsed2 = MessageToDict(
-            parse_file(
-                str(args.file2), args.version))
-        returns = str(get_edits_string(
-                parsed1,
-                parsed2,
-                True if args.short else False
-            ))
-        print(returns)
+
+    args: Namespace = parser.parse_args() #the arguments
+    parsed1 = MessageToDict(
+        parse_file(
+            str(args.file1), args.version))
+
+    parsed2 = MessageToDict(
+        parse_file(
+            str(args.file2), args.version)  )
+    returns = str(get_edits_string(
+            parsed1,
+            parsed2,
+            True if args.short else False
+        ))
+    print(returns)
